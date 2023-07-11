@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float rotateSpeed = 100f;
     [SerializeField] float thrustAmount = 1000f;
     private Rigidbody rb;
+    
 
     void Start()
     {
@@ -16,8 +17,11 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        ProcessRotation();
-        ProcessBoost();
+        if (FindObjectOfType<CollisionHandler>().canMove == true)
+        {
+            ProcessRotation();
+            ProcessBoost();
+        }
     }
     
     void ProcessBoost()
