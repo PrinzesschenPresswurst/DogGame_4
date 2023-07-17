@@ -7,22 +7,29 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float rotateSpeed = 100f;
     [SerializeField] float thrustAmount = 1000f;
-    private Rigidbody rb;
+    [SerializeField] private AudioClip boostSound;
+    [SerializeField] private ParticleSystem boostParticles;
     
-
+    private Rigidbody rb;
+    private AudioSource audioSource;
+    
+    ///////////////////////
+    
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
+        audioSource.clip = boostSound;
     }
 
     void Update()
     {
-        if (FindObjectOfType<CollisionHandler>().canMove == true)
-        {
-            ProcessRotation();
-            ProcessBoost();
-        }
+        ProcessBoost();
+        ProcessRotation();
+        PlayBoostSound();
     }
+    
+    ///////////////////////
     
     void ProcessBoost()
     {
@@ -45,11 +52,32 @@ public class PlayerController : MonoBehaviour
             CalculateRotation(- rotateSpeed);
         }
     }
+    
     private void CalculateRotation(float containerForRotateSpeed)
     {
         rb.freezeRotation = true; // so the physics system is not messing with the manual rotation
         transform.Rotate(Vector3.forward * containerForRotateSpeed * Time.deltaTime);
         rb.freezeRotation = false;
+    }
+    
+    ///////////////////////
+    
+    void PlayBoostSound()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            audioSource.loop = true;
+            audioSource.Play();
+            boostParticles.Play();
+            
+        }
+        else if (Input.GetKeyUp(KeyCode.Space))
+        {
+            audioSource.Stop();
+            boostParticles.Stop();
+            boostParticles.Clear();
+            audioSource.loop = false;  
+        }
     }
 }
 

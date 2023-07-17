@@ -32,11 +32,5 @@ public class BoostSoundHandler : MonoBehaviour
             audioSource.Stop();
             audioSource.loop = false;  
         }
-        
-        else if (FindObjectOfType<CollisionHandler>().canMove == false)
-        {
-            audioSource.Stop(); 
-        }
-            
     }
 }
