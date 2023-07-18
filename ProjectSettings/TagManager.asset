@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Friendly
+  - Treat
+  - Obstacle
+  - Music
   layers:
   - Default
   - TransparentFX

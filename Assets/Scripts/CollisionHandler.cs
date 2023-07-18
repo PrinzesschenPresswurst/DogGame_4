@@ -12,8 +12,6 @@ public class CollisionHandler : MonoBehaviour
     [SerializeField] private ParticleSystem crashParticle;
     [SerializeField] private AudioClip winSound;
 
-    //[SerializeField] private ParticleSystem winParticle;
-
     private AudioSource audioSource;
     private MeshRenderer meshRenderer;
 
@@ -23,7 +21,8 @@ public class CollisionHandler : MonoBehaviour
     private int startSceneIndex;
     bool crashSoundHasPlayed = false;
     
-    public bool isTransitioning;
+    private bool isTransitioning = false;
+    private bool collisionOff = false;
 
     private void Start()
     {
@@ -33,6 +32,12 @@ public class CollisionHandler : MonoBehaviour
         nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
         audioSource = GetComponent<AudioSource>();
         isTransitioning = false;
+    }
+
+    private void Update()
+    {
+        Cheat_LoadNextLevel();
+        Cheat_NoCollisions();
     }
 
     private void OnCollisionEnter(Collision other)
@@ -48,6 +53,11 @@ public class CollisionHandler : MonoBehaviour
                 LevelCompleteSequence();
                 break;
             default:
+                if (collisionOff)
+                {
+                    other.gameObject.GetComponent<Collider>().enabled = false;
+                    return;
+                }
                 CrashSequence();
                 break;
         }
@@ -76,9 +86,12 @@ public class CollisionHandler : MonoBehaviour
 // LEVEL COMPLETE CASE
     void LevelCompleteSequence()
     {
+        if (FindObjectOfType<ScoreCounter>().allTreatsCollected == false)
+        {
+            return;
+        }
         DisableControls();
         audioSource.PlayOneShot(winSound);
-        //winParticle.Play();
         Invoke("LoadNextLevel",1f);
     }
 
@@ -100,5 +113,22 @@ public class CollisionHandler : MonoBehaviour
         GetComponentInChildren<ParticleSystem>().Clear();
         GetComponent<PlayerController>().enabled = false;
         
+    }
+
+    void Cheat_LoadNextLevel()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            LoadNextLevel();
+        }
+    }
+
+    void Cheat_NoCollisions()
+    {
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            collisionOff = !collisionOff;
+            //GetComponent<Collider>().enabled = false;
+        }
     }
 }

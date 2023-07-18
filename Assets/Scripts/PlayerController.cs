@@ -7,9 +7,11 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float rotateSpeed = 100f;
     [SerializeField] float thrustAmount = 1000f;
-    [SerializeField] private AudioClip boostSound;
-    [SerializeField] private ParticleSystem boostParticles;
     
+    [SerializeField] private AudioClip boostSound;
+    
+    [SerializeField] private ParticleSystem boostParticles;
+
     private Rigidbody rb;
     private AudioSource audioSource;
     
@@ -19,14 +21,13 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
-        audioSource.clip = boostSound;
     }
 
     void Update()
     {
         ProcessBoost();
         ProcessRotation();
-        PlayBoostSound();
+        PlayBoostFeedback();
     }
     
     ///////////////////////
@@ -62,11 +63,12 @@ public class PlayerController : MonoBehaviour
     
     ///////////////////////
     
-    void PlayBoostSound()
+    void PlayBoostFeedback()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
             audioSource.loop = true;
+            audioSource.clip = boostSound;
             audioSource.Play();
             boostParticles.Play();
             
